@@ -14,5 +14,10 @@ public class Car {
     }
     
     public int getCapacity() {
-    	return this.capacity;    }
+    	return this.capacity;    
+    }
+    
+    public void stopCharging() {
+    	
+    }
 }
