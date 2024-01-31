@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -50,7 +51,9 @@ public class ChargingStationManagement implements Runnable {
 			  Queue<Object> carQueue = queueService.getFromQueue();
               for (Object element : carQueue) {
                   if (element instanceof Car) {
-                	  Isdone= ChargingStations.ChargCar((Car) element);
+                	  LocalDateTime currentDateTime = LocalDateTime.now();
+                  	int carTurnTime=currentDateTime.getMinute();
+                	  Isdone= ChargingStations.ChargCar((Car) element,carTurnTime);
                 	  if(Isdone==true) {
                 		  carsToRemove.add((Car) element);
                 	  }

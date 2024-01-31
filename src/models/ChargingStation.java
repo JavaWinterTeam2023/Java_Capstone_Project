@@ -64,31 +64,37 @@ public class ChargingStation {
     	resourceSemaphore.release();
     }
 
-    public boolean ChargCar(Car car) {
+    public boolean ChargCar(Car car, int CTurnTime) {
 
-    	boolean charged=false;
+    	boolean IsExitFroQueue=false;
     	for (Location loc:locations) {
-        	LocalDateTime currentDateTime = LocalDateTime.now();
-        	int currentMinute=currentDateTime.getMinute();
-        	int waitTime=currentMinute-car.getArrivalTime();
+        	System.out.println("Car " + car.getId() + "has the capaciti of the " +car.getCapacity());
+        	System.out.println("location  " + loc.getnumLocation() + "has the capacity of the " +loc.getchargeRate());
     		synchronized (loc) {
 				if(loc.isAvailable() && loc.getchargeRate()>= car.getCapacity()) {
 					loc.chargeVehicle(car.getCapacity());
                     System.out.println("car " +car.getId() + " charged at " + ChargingStationName + " - Location: " + loc.getnumLocation());
-                    charged = true;
+                    IsExitFroQueue = true;
                     break;
 				}
-				else if(!loc.isAvailable() && waitTime>30 ) {
-					charged = false;
+				else if(!loc.isAvailable()  ) {
+					LocalDateTime currentDateTime = LocalDateTime.now();
+		        	int currentMinute=currentDateTime.getMinute();
+		        	int waitTime=currentMinute-CTurnTime;
+		        	if(car.getWatingTime()> waitTime) {
+		        		IsExitFroQueue=true;
+		        		break;
+		        	}
+		        	IsExitFroQueue = false;
                     break;
 				}
 			}
     	}
-    	 if (!charged) {
+    	 if (!IsExitFroQueue) {
              System.out.println(car.getId() + " couldn't charge at " + ChargingStationName + ". it is looking for another station");
              // Add logic for waiting and potentially going to another station
          }
-    	 return charged;
+    	 return IsExitFroQueue;
     }
 	
 }

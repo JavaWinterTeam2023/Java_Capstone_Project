@@ -13,7 +13,7 @@ import services.QueueService;
 public class ChargingStationSimulation {
 	   public static void main(String[] args) {
 		   int numStations = 2; // Adjust as needed
-           int numCars=5;
+           int numCars=6;
 	        // Create and configure charging stations and services dynamically
            ChargingStationManagement[] chargingServices = new ChargingStationManagement[numStations];
 	        Thread[] chargingThreads = new Thread[numStations];
@@ -29,7 +29,7 @@ public class ChargingStationSimulation {
 		      //Queue<Car> carQueue= QService.convertToCarQueue(ObjectQueue);
 		        // Create and configure charging stations
 		        for (int i = 0; i < numStations; i++) {
-		        	ChargingStation chargingStation  = new ChargingStation("Station " + (i + 1), new Random().nextInt(90) + 20, 5);
+		        	ChargingStation chargingStation  = new ChargingStation("Station " + (i + 1), new Random().nextInt(100) + 20, 5);
 		        	chargingServices[i]= new ChargingStationManagement(chargingStation,queueService);
 		        	chargingThreads[i] = new Thread(chargingServices[i]);
 		            

@@ -6,12 +6,12 @@ import java.util.Queue;
 public class Car {
     private int id;
     private int capacity;
-    private int arrivalTime;
+    private int WatingTime;
 
-    public Car(int id, int capacity, int ArrivalTime) {
+    public Car(int id, int capacity, int WatingTime) {
         this.id = id;
         this.capacity = capacity;
-        this.arrivalTime=ArrivalTime;
+        this.WatingTime=WatingTime;
 
         
     }
@@ -23,11 +23,11 @@ public class Car {
     public int getCapacity() {
     	return this.capacity;    
     }
-    public int getArrivalTime() {
-    	return this.arrivalTime;    
+    public int getWatingTime() {
+    	return this.WatingTime;    
     }
-    public void setArrivalTime(int arrTime) {
-     this.arrivalTime=arrTime;    
+    public void setWatingTime(int wTime) {
+     this.WatingTime=wTime;    
     }
     
 

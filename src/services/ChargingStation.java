@@ -26,9 +26,9 @@ public class ChargingStation {
     }
 
     public synchronized void addToQueue(Car car, int currentTime) {
-        car.setArrivalTime(currentTime);
+        //car.setArrivalTime(currentTime);
         queue.add(car);
-        int waitTime = currentTime - car.getArrivalTime();
+        int waitTime = currentTime;
         if (queue.size() > 1 && waitTime > 15 * 60) {
             System.out.println("Car " + car.getId() + " left the queue at Station " + stationId);
             queue.poll(); 
