@@ -63,17 +63,32 @@ public class ChargingStation {
     public void releaseChargingPoint() {
     	resourceSemaphore.release();
     }
+    
+    private int calculateChargingTime(double powerRate, int maxCarCap, int currentCarCap) {
+        int remainingEnergy = maxCarCap - currentCarCap;
+        double chargingSpeed = powerRate / remainingEnergy;
+        return (int) (remainingEnergy / chargingSpeed);
+    }
 
     public boolean ChargCar(Car car, int CTurnTime) {
 
+    	int chargingTime=0;
+    	
     	boolean IsExitFroQueue=false;
     	for (Location loc:locations) {
+
         	System.out.println("Car " + car.getId() + "has the capaciti of the " +car.getCapacity());
         	System.out.println("location  " + loc.getnumLocation() + "has the capacity of the " +loc.getchargeRate());
     		synchronized (loc) {
 				if(loc.isAvailable() && loc.getchargeRate()>= car.getCapacity()) {
-					loc.chargeVehicle(car.getCapacity());
+					  chargingTime = calculateChargingTime(loc.getchargeRate(), car.getCapacity(), car.getRemainingCapacity());
+	                    System.out.println("Car " + car.getId() + " is charging at Station " + Id +
+	                            " - Location: " + loc.getnumLocation() + " for " + chargingTime + " seconds.");
+					
+					 loc.chargeVehicle(car);
+					 car.setRemainingCapacity(0);
                     System.out.println("car " +car.getId() + " charged at " + ChargingStationName + " - Location: " + loc.getnumLocation());
+
                     IsExitFroQueue = true;
                     break;
 				}
@@ -81,10 +96,11 @@ public class ChargingStation {
 					LocalDateTime currentDateTime = LocalDateTime.now();
 		        	int currentMinute=currentDateTime.getMinute();
 		        	int waitTime=currentMinute-CTurnTime;
-		        	if(car.getWatingTime()> waitTime) {
+		        	if(chargingTime> waitTime) {
 		        		IsExitFroQueue=true;
 		        		break;
 		        	}
+		        	
 		        	IsExitFroQueue = false;
                     break;
 				}

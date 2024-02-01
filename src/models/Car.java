@@ -6,13 +6,16 @@ import java.util.Queue;
 public class Car {
     private int id;
     private int capacity;
-    private int WatingTime;
+    private int maxWaitingTime;
+    private int remainingCapacity;
+    private boolean fullyCharged;
 
-    public Car(int id, int capacity, int WatingTime) {
+    public Car(int id, int capacity, int maxWatingTime, int remainingCapacity, boolean fullyCharged) {
         this.id = id;
         this.capacity = capacity;
-        this.WatingTime=WatingTime;
-
+        this.maxWaitingTime=maxWaitingTime;
+        this.remainingCapacity = remainingCapacity;
+        this.fullyCharged = fullyCharged;
         
     }
 
@@ -23,17 +26,28 @@ public class Car {
     public int getCapacity() {
     	return this.capacity;    
     }
-    public int getWatingTime() {
-    	return this.WatingTime;    
-    }
-    public void setWatingTime(int wTime) {
-     this.WatingTime=wTime;    
-    }
-    
 
-   
+    public int getMaxWaitingTime() {
+        return maxWaitingTime;
+    }
+
+    public int getRemainingCapacity() {
+        return remainingCapacity;
+    }
+
+    public void setRemainingCapacity(int remainingCapacity) {
+        this.remainingCapacity = remainingCapacity;
+    }
+
+    public boolean isFullyCharged() {
+        return fullyCharged;
+    }
+
+    public void setFullyCharged(boolean fullyCharged) {
+        this.fullyCharged = fullyCharged;
+    }
+
     public void stopCharging() {
-    	
     }
 
 

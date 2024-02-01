@@ -7,7 +7,6 @@ import java.util.Random;
 import models.Car;
 import models.ChargingStation;
 import services.ChargingStationManagement;
-import services.NweChargingStations;
 import services.QueueService;
 
 public class ChargingStationSimulation {
@@ -19,7 +18,7 @@ public class ChargingStationSimulation {
 	        Thread[] chargingThreads = new Thread[numStations];
 	        QueueService queueService= new QueueService();
 	        for (int j = 1; j <= numCars; j++) {
-	            Car car = new Car(  j, new Random().nextInt(50) + 50, new Random().nextInt(10) + 20);
+	            Car car = new Car(  j, new Random().nextInt(50) + 50, new Random().nextInt(10) + 20,0,false);
 	            queueService.addToQueue(car);
 	        }
 		        

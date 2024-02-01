@@ -22,14 +22,14 @@ public class Location {
      this.NumLocation=number;    
     }
 	
-	public void chargeVehicle(int amount) {
+	public void chargeVehicle(Car car) {
 		try {
 			Thread.sleep(1000);
 		}
 		catch(InterruptedException ex) {
-			
+			System.out.println("Charging process for car " + car.getId() + " interrupted: " + ex.getMessage());
 		}
-		this.chargeRate=updateChargeRate( chargeRate,  amount);
+		this.chargeRate=updateChargeRate( chargeRate,  car.getCapacity());
 	}
 	
 	 public boolean isAvailable() {
