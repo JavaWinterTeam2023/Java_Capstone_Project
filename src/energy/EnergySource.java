@@ -12,6 +12,7 @@ public class EnergySource implements Runnable{
 		GRID
 	}
 	
+	
 	public EnergyType name; 
 	public double maxCapacity;
 	public double currentCapacity;
@@ -22,6 +23,7 @@ public class EnergySource implements Runnable{
 		this.maxCapacity = maxCapacity;
 		this.weather = wCond;
 	}
+	
 	
 	@Override
 	public void run() {
