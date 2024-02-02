@@ -1,8 +1,11 @@
 package models;
 
+import java.util.Queue;
+
 public class Car {
     private int id;
     private int capacity;
+    private int waitingTime;
     private int maxWaitingTime;
     private int remainingCapacity;
     private boolean fullyCharged;
@@ -17,13 +20,14 @@ public class Car {
         this.fullyCharged = fullyCharged;
         this.isExitFromQueue = false;
         this.isAssigned = false;
+        this.waitingTime = 0;
     }
 
-    public synchronized boolean isAssigned() {
+    public boolean isAssigned() {
 		return isAssigned;
 	}
 
-	public synchronized void setAssigned(boolean isAssigned) {
+	public void setAssigned(boolean isAssigned) {
 		this.isAssigned = isAssigned;
 	}
 
@@ -56,7 +60,50 @@ public class Car {
     }
 
     public void stopCharging() {
+    	
     }
 
-
+    public void waitingForLocation(ChargingStation chargingStation, Queue<Object> carQueue) {
+    	Thread thread = new Thread(() -> {    		
+    		boolean ableToWait = true;
+    		while (ableToWait) {
+    			int remainWaitingTime = maxWaitingTime - waitingTime;
+    			if (remainWaitingTime < 0) {
+    				System.out.println("[Car " + this.id + "][Leaving] ");
+    				System.out.println("\tReach maximum waiting time of " 
+    						+ this.maxWaitingTime + " minutes. ");
+    				System.out.println("\tLeaving " + chargingStation.getName());
+    				break;
+    			}
+//    			System.out.println("Remaining time: " + remainWaitingTime + " of car " + this.id);
+	    		for (Location location : chargingStation.getLocations()) {
+	    				synchronized (location) {
+	    				if(location.isAvailable() && !this.isAssigned) {
+		    				isAssigned = true;
+		    				location.setAvailable(false);
+		    				ableToWait = false;
+		        			location.chargeVehicle(this);
+		        			
+		        			System.out.println("[Car " + this.getId() + "]" + "[Charging]");
+		        			System.out.println("\tAt " + chargingStation.getName() 
+		        					+ " - Location: " + location.getNumLocation());
+		        			System.out.println("\tCurrent weather is: " 
+		        					+ chargingStation.getEnergyManager().getWeather().getWeatherCondition());
+		        			System.out.println("\tLocation charge rate: " + location.getChargeRate());
+	        				
+		        			break;
+	    				}
+	    			}
+	    		}
+	    		try {
+	    			waitingTime += 1;
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	});
+    	thread.start();
+    }
 }

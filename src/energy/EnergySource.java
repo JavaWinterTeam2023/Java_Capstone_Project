@@ -32,8 +32,7 @@ public class EnergySource implements Runnable{
 		while(true) {
 			i++;
 			this.updateCapacity();
-			System.out.println("Iteration: " + i + " Weather: " + this.weather.currentWeather + " Energy: " + this.name + " with capacity: " + this.maxCapacity);
-			
+//			System.out.println("Iteration: " + i + " Weather: " + this.weather.currentWeather + " Energy: " + this.name + " with capacity: " + this.maxCapacity);		
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {

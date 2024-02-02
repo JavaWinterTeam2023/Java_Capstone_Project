@@ -1,20 +1,40 @@
 package simulation;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.Random;
 
+import energy.*;
 import models.Car;
 import models.ChargingStation;
+import models.Weather;
 import services.ChargingStationManagement;
 import services.QueueService;
+import services.EnergyManagement;
 
 public class ChargingStationSimulation {
 	  
 	public static void main(String[] args) {
-		   
 		int numStations = 2;
         int numCars = 10;
+        
+        //Weather simulation
+        Weather weather = new Weather();
+        
+        ArrayList<EnergySource> eSource = new ArrayList<>(); 
+        Solar solarEnergy = new Solar(100, weather);
+      	Grid gridPower = new Grid(200, weather);
+      	Storage storageEnergy = new Storage(50, weather);
+      	eSource.add(solarEnergy);
+      	eSource.add(gridPower);
+      	eSource.add(storageEnergy);
+      	EnergyManagement EMS = new EnergyManagement(eSource, weather);
+      	
+      	for (int i = 0; i < eSource.size(); i++) {
+			Thread updateThread = new Thread(eSource.get(i));
+			updateThread.start();
+		}	
+		Thread thread = new Thread(EMS);
+		thread.start();
 	        
         // Create and configure charging stations and services dynamically
         ChargingStationManagement[] chargingServices = new ChargingStationManagement[numStations - 1];
@@ -22,20 +42,23 @@ public class ChargingStationSimulation {
         QueueService queueService= new QueueService();
 	       
 	    for (int j = 1; j <= numCars; j++) {
+	    	
 	    	int maxCapacity = (new Random().nextInt(2, 4))*25;
-	    	int remainingCapacity = new Random().nextInt(20, maxCapacity - 20);
+	    	int remainingCapacity = new Random().nextInt(maxCapacity - 30, maxCapacity - 10);
 	    	int waitingTime = new Random().nextInt(10, 20);
 	    	Car car = new Car(j, maxCapacity, waitingTime, remainingCapacity, false);
-	        System.out.println("Car capacity: " + car.getCapacity()
-	        		+ " waiting time: " + car.getMaxWaitingTime()
-	        		+ " remaining capacity: " + car.getRemainingCapacity());
+	    	
+	        System.out.println("[Car " + car.getId() + "][Arriving]"); 
+	        System.out.println("\tCapacity: " + car.getCapacity());
+	        System.out.println("\tMax waiting time: " + car.getMaxWaitingTime());
+	        System.out.println("\tRemaining capacity: " + car.getRemainingCapacity());
+	        
 	    	queueService.addToQueue(car);
 	    }
 		   
 		// Create and configure charging stations
 		for (int i = 0; i < numStations - 1; i++) {
-			System.out.println("Create charging station.");
-			ChargingStation chargingStation = new ChargingStation("Station " + (i + 1), new Random().nextInt(50, 80) + 20, 4);
+			ChargingStation chargingStation = new ChargingStation("Station " + (i + 1), new Random().nextInt(4, 5)*60, 4, EMS);
 			chargingServices[i] = new ChargingStationManagement(chargingStation, queueService);
 			chargingThreads[i] = new Thread(chargingServices[i]);
 		}
@@ -49,7 +72,7 @@ public class ChargingStationSimulation {
         for (Thread chargingThread : chargingThreads) {
         	 try {
         		 if (chargingThread != null) {
-                 chargingThread.join();
+        			 chargingThread.join();
         		 }
              } catch (InterruptedException e) {
                  e.printStackTrace();

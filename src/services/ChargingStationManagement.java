@@ -1,6 +1,5 @@
 package services;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -25,21 +24,15 @@ public class ChargingStationManagement implements Runnable {
 	@Override
 	public void run() {
 		Queue<Car> carsToRemove = new LinkedList<>();
-		boolean Isdone = false;
-		
-		System.out.println("Enter thread " + this.ChargingStations.getName());
-		
-//		synchronized (queueService) {
 		if (!queueService.isQueueEmpty()) {
 			System.out.println("Enter queue service");
 			Queue<Object> carQueue = queueService.getFromQueue();
 			for (Object element : carQueue) {
+				Car tempCar = (Car) element;
 				if (element instanceof Car) {
-					LocalDateTime currentDateTime = LocalDateTime.now();
-					int carTurnTime = currentDateTime.getMinute();
-					Isdone = ChargingStations.assignedToLocation((Car) element);
-            	  
-					if(Isdone == true) {
+					ChargingStations.assignedToLocation(tempCar, carQueue);
+					
+					if (tempCar.isAssigned() == true) {
 						carsToRemove.add((Car) element);
 					}
 				}
@@ -49,7 +42,6 @@ public class ChargingStationManagement implements Runnable {
 				queueService.addToQueue((Car) element);
 			}
 		}	
-//		}
 	}
 	
 

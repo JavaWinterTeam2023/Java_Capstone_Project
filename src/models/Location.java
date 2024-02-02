@@ -45,19 +45,17 @@ public class Location {
 			this.setAvailable(false);
 			while (car.getRemainingCapacity() < car.getCapacity()) {    
         		calculateRemainingCapacity(this, car);
-        		this.chargingTime = calculateChargingTime(this.getChargeRate(), car.getCapacity(), car.getRemainingCapacity());	                    
-//              System.out.println("Car " + car.getId() + " is charging at " + this.ChargingStationName +
-//                            " - Location: " + this.getNumLocation() 
-//                            + " for " + this.chargingTime + " seconds " 
-//                            + " remaining capacity: " + car.getRemainingCapacity());
-                
+        		this.chargingTime = calculateChargingTime(this.getChargeRate(), 
+        				car.getCapacity(), car.getRemainingCapacity());	                          
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    System.out.println("Charging process for car " + car.getId() + " interrupted: " + e.getMessage());
+                    System.out.println("Charging process for car " + car.getId() 
+                    	+ " interrupted: " + e.getMessage());
                 }
         	}  
-			System.out.println("Car " + car.getId() + " finished charging at Location " + this.getNumLocation());
+			System.out.println("[Car " + car.getId() + "][Finishing]");
+			System.out.println("\tFinish charging at Location " + this.getNumLocation());
 			this.setAvailable(true);
 			car.isExitFromQueue = true;
 		});
@@ -70,5 +68,9 @@ public class Location {
 	
 	public void setAvailable(boolean isAvailable) {
 		this.available = isAvailable;
+	}
+	
+	public double updateChargeRate(double chargeRate, int amount) {
+		return chargeRate -= amount;
 	}
 }

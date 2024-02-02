@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import energy.EnergySource;
 import energy.EnergySource.*;
 import models.Weather;
-import services.EnergyManagementSystem;
+import services.EnergyManagement;
 import energy.Solar;
 
 public class EnergySimulation {
