@@ -26,6 +26,7 @@ public class EnergyManagementSystem implements Runnable{
 		return totalCapacity;
 	}
 
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
