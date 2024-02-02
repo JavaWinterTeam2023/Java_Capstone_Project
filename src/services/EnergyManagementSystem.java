@@ -1,9 +1,10 @@
-package models;
+package services;
 
 import java.util.ArrayList;
 
 import energy.EnergySource;
 import energy.EnergySource.EnergyType;
+import models.Weather;
 
 public class EnergyManagementSystem implements Runnable{
 	private ArrayList<EnergySource> energySource = new ArrayList<>();

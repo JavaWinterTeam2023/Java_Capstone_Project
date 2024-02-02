@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import energy.EnergySource;
 import energy.EnergySource.*;
-import models.EnergyManagementSystem;
 import models.Weather;
+import services.EnergyManagementSystem;
 import energy.Solar;
 
 public class EnergySimulation {

@@ -1,25 +1,33 @@
 package models;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class Car {
     private int id;
     private int capacity;
     private int maxWaitingTime;
     private int remainingCapacity;
     private boolean fullyCharged;
+    public boolean isExitFromQueue;
+    private boolean isAssigned;
 
-    public Car(int id, int capacity, int maxWatingTime, int remainingCapacity, boolean fullyCharged) {
+    public Car(int id, int capacity, int maxWaitingTime, int remainingCapacity, boolean fullyCharged) {
         this.id = id;
         this.capacity = capacity;
-        this.maxWaitingTime=maxWaitingTime;
+        this.maxWaitingTime = maxWaitingTime;
         this.remainingCapacity = remainingCapacity;
         this.fullyCharged = fullyCharged;
-        
+        this.isExitFromQueue = false;
+        this.isAssigned = false;
     }
 
-    public int getId() {
+    public synchronized boolean isAssigned() {
+		return isAssigned;
+	}
+
+	public synchronized void setAssigned(boolean isAssigned) {
+		this.isAssigned = isAssigned;
+	}
+
+	public int getId() {
         return id;
     }
     
@@ -28,7 +36,7 @@ public class Car {
     }
 
     public int getMaxWaitingTime() {
-        return maxWaitingTime;
+        return this.maxWaitingTime;
     }
 
     public int getRemainingCapacity() {

@@ -4,56 +4,32 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 
 public class ChargingStation {
-	private int Id;
-	private String SName;
-	private String Scode;
-	private int YearOfConstruction;
+	private int stationId;
 	private List<User> Users;
 	private final Semaphore resourceSemaphore;
 	private Location[] locations;
 	private String ChargingStationName;
 	    
-	    public ChargingStation( String ChargingStationName,int initialEnergy,int numLocations) {
-	    	this.resourceSemaphore = new Semaphore(initialEnergy);
-	    	 this.locations = new Location[numLocations];
-	    	 this.ChargingStationName=ChargingStationName;
-	    	 for (int i = 0; i < numLocations; i++) {
-	             locations[i] = new Location(initialEnergy, (i+1));
-	         }
-	    	 
-	    }
+    public ChargingStation(String ChargingStationName, int initialEnergy, int numLocations) {
+    	this.resourceSemaphore = new Semaphore(initialEnergy);
+    	this.locations = new Location[numLocations];
+    	this.ChargingStationName = ChargingStationName;
+    	 
+    	for (int i = 0; i < numLocations; i++) {
+            this.locations[i] = new Location(initialEnergy, (i+1));
+        }
+    	 
+    }
 	
-	public int GetId() {
-		return Id;
-	}
-	public void SetId(int id) {
-		this.Id=id;
-	}
-	public String GetSName() {
-		return SName;
-	}
-	public void SetSName(String sName) {
-		this.SName=sName;
-	}
-	public String GetScode() {
-		return Scode;
-	}
-	public void SetScode(String sCode) {
-		this.Scode=sCode;
-	}
-	public int GetYearOfConstruction() {
-		return YearOfConstruction;
-	}
-	public void SetYearOfConstruction(int yConstruction) {
-		this.YearOfConstruction=yConstruction;
+	public Location[] getLocations() {
+	    return locations;
 	}
 	
-	 public Location[] getLocations() {
-	        return locations;
-	    }
+	public String getName() {
+		return this.ChargingStationName;
+	}
 
     // Method to acquire a semaphore permit
 	public boolean tryAcquireChargingPoint() {
@@ -69,48 +45,107 @@ public class ChargingStation {
         double chargingSpeed = powerRate / remainingEnergy;
         return (int) (remainingEnergy / chargingSpeed);
     }
+    
+    private void calculateRemainingCapacity(Location loc, Car car) {
+    	int increasedEnergy = (int) loc.getChargeRate()/60;               		
+		int newRemainingCap = car.getRemainingCapacity() + increasedEnergy;               		
+		if (newRemainingCap > car.getCapacity())
+			newRemainingCap = car.getCapacity();
+		
+		car.setRemainingCapacity(newRemainingCap);
+    }
 
-    public boolean ChargCar(Car car, int CTurnTime) {
-
-    	int chargingTime=0;
+    public boolean chargeCar(Car car, int CTurnTime) {
+//    	int chargingTime = 0;   	
+//    	boolean isExitFromQueue = false;
     	
-    	boolean IsExitFroQueue=false;
-    	for (Location loc:locations) {
-
-        	System.out.println("Car " + car.getId() + "has the capaciti of the " +car.getCapacity());
-        	System.out.println("location  " + loc.getnumLocation() + "has the capacity of the " +loc.getchargeRate());
-    		synchronized (loc) {
-				if(loc.isAvailable() && loc.getchargeRate()>= car.getCapacity()) {
-					  chargingTime = calculateChargingTime(loc.getchargeRate(), car.getCapacity(), car.getRemainingCapacity());
-	                    System.out.println("Car " + car.getId() + " is charging at Station " + Id +
-	                            " - Location: " + loc.getnumLocation() + " for " + chargingTime + " seconds.");
-					
-					 loc.chargeVehicle(car);
-					 car.setRemainingCapacity(0);
-                    System.out.println("car " +car.getId() + " charged at " + ChargingStationName + " - Location: " + loc.getnumLocation());
-
-                    IsExitFroQueue = true;
-                    break;
-				}
-				else if(!loc.isAvailable()  ) {
-					LocalDateTime currentDateTime = LocalDateTime.now();
-		        	int currentMinute=currentDateTime.getMinute();
-		        	int waitTime=currentMinute-CTurnTime;
-		        	if(chargingTime> waitTime) {
-		        		IsExitFroQueue=true;
-		        		break;
-		        	}
-		        	
-		        	IsExitFroQueue = false;
-                    break;
-				}
+    	for (Location loc : locations) {
+    		if (car.isAssigned() == true)
+    			break;
+    		
+    		System.out.println("Enter location: " + loc.getNumLocation() + " " + car.isAssigned());
+    		
+        	synchronized (loc) {
+        		System.out.println("Enter here");
+        		Thread thread = new Thread(() -> {
+	    			if(loc.isAvailable()) {  
+	    				loc.setAvailable(false);
+	    				while (car.getRemainingCapacity() < car.getCapacity()) {    
+	                		calculateRemainingCapacity(loc, car);
+	                		loc.chargingTime = calculateChargingTime(loc.getChargeRate(), car.getCapacity(), car.getRemainingCapacity());	                    
+		                    System.out.println("Car " + car.getId() + " is charging at " + this.ChargingStationName +
+		                            " - Location: " + loc.getNumLocation() 
+		                            + " for " + loc.chargingTime + " seconds " 
+		                            + " remaining capacity: " + car.getRemainingCapacity());
+		                    
+		                    try {
+		                        Thread.sleep(1000);
+		                    } catch (InterruptedException e) {
+		                        System.out.println("Charging process for car " + car.getId() + " interrupted: " + e.getMessage());
+		                    }
+	                	}  
+	    				System.out.println("Car " + car.getId() + " finished charging at Location " + loc.getNumLocation());
+	    				loc.setAvailable(true);
+	    				car.isExitFromQueue = true;
+	//                    break;
+					}
+	//				else if(!loc.isAvailable()) {
+	//					LocalDateTime currentDateTime = LocalDateTime.now();
+	//		        	int currentMinute = currentDateTime.getMinute();
+	//		        	int waitTime = currentMinute - CTurnTime;
+	//		        	if(chargingTime> waitTime) {
+	//		        		isExitFromQueue=true;
+	//		        		break;
+	//		        	}
+	//		        	
+	//		        	isExitFromQueue = false;
+	//                    break;
+	//				}
+	        		}
+    			);
+        		
+        		thread.start();
+        		car.setAssigned(true);
+//        		loc.setAvailable(false);
 			}
     	}
-    	 if (!IsExitFroQueue) {
-             System.out.println(car.getId() + " couldn't charge at " + ChargingStationName + ". it is looking for another station");
-             // Add logic for waiting and potentially going to another station
-         }
-    	 return IsExitFroQueue;
+    	
+    	
+    	if (!car.isExitFromQueue) {
+            System.out.println("Car " + car.getId() + " couldn't charge at " + ChargingStationName + ". it is looking for another station");
+            // Add logic for waiting and potentially going to another station
+        }
+    	return car.isExitFromQueue;
     }
-	
+    
+    public boolean assignedToLocation(Car car) {
+    	boolean isAssigned = false;
+    	for (Location location : this.locations) {
+    		if (location.isAvailable()) {
+    			System.out.println("Car " + car.getId() + " start charging at " 
+    					+ ChargingStationName + " - Location: " + location.getNumLocation());
+    			location.setAvailable(false);
+    			isAssigned = true;
+    			location.chargeVehicle(car);
+    			break;
+    		}
+    	}
+    	
+    	if (!isAssigned) {
+    		System.out.println("Car " + car.getId() + " not assigned");
+    		boolean ableToWait = false;
+    		for (Location location : this.locations) {
+    			if (location.chargingTime < car.getMaxWaitingTime()) {
+    				ableToWait = true;
+    			}
+    		}
+    		
+    		if (!ableToWait) {
+    			System.out.println("Car " + car.getId() + " couldn't charge at " 
+    					+ ChargingStationName + ". It is looking for another station");
+    			return false;
+    		}
+    	}
+		return true;
+    }
 }

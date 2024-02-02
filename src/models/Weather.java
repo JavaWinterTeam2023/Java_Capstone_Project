@@ -3,7 +3,11 @@ package models;
 import java.util.Random;
 
 public class Weather {
-    private String[] conditions = {"Sunny", "Cloudy", "Snowy", "Rainy"};
+    private String[] conditions = {
+    		"Sunny", 
+    		"Cloudy", 
+    		"Snowy", 
+    		"Rainy"};
     private Random random;
     public String currentWeather;
 
