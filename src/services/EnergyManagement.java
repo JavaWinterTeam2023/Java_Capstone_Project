@@ -7,6 +7,10 @@ import models.Weather;
 public class EnergyManagement implements Runnable{
 	private ArrayList<EnergySource> energySource = new ArrayList<>();
 	private int totalCapacity;
+	public int getTotalCapacity() {
+		return totalCapacity;
+	}
+
 	private Weather weather;
 	
 	public Weather getWeather() {
@@ -33,9 +37,11 @@ public class EnergyManagement implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true) {
-			weather.getWeatherCondition();
-			updateTotalCapacity();
-//			System.out.println("Total: " + this.totalCapacity);
+			synchronized(weather) {
+				weather.setWeatherCondition();
+				updateTotalCapacity();
+	//			System.out.println("Total: " + this.totalCapacity);
+			}
 			try {
                 // Sleep for 3 seconds before the next update
                 Thread.sleep(3000);

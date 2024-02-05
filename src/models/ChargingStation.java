@@ -20,9 +20,9 @@ public class ChargingStation {
     	this.locations = new Location[numLocations];
     	this.ChargingStationName = ChargingStationName;
     	this.energyManager = EMS; 
-    	
+//    	this.updateLocationEnergy();
     	for (int i = 0; i < numLocations; i++) {
-            this.locations[i] = new Location(getEnergyManager().updateTotalCapacity()/numLocations, i+1);
+            this.locations[i] = new Location(EMS.updateTotalCapacity()/numLocations, i+1);
         }    	 
     }
 	
@@ -41,6 +41,20 @@ public class ChargingStation {
 
     public void releaseChargingPoint() {
     	resourceSemaphore.release();
+    }
+    
+    public void updateLocationEnergy () {
+//    	Thread thread = new Thread(() -> {
+//    		while(true) {
+    			synchronized (this.locations) {
+	    			for (Location location : this.locations) {
+	    				double updateChargeRate = energyManager.getTotalCapacity() / 4;
+	    				location.setChargeRate(updateChargeRate);
+	    			}
+    			}
+//    		}
+//    	});
+//    	thread.start();
     }
 
     public boolean chargeCar(Car car, int CTurnTime) {
@@ -82,7 +96,7 @@ public class ChargingStation {
     	boolean isAssigned = false;
     	for (Location location : this.locations) {
     		if (location.isAvailable()) {
-    			
+    			this.updateLocationEnergy();
     			System.out.println("[Car " + car.getId() + "]" + "[Charging]");
     			System.out.println("\tAt " + ChargingStationName + " - Location: " + location.getNumLocation());
     			System.out.println("\tCurrent weather is: " 
@@ -92,7 +106,7 @@ public class ChargingStation {
     			location.setAvailable(false);
     			isAssigned = true;
     			car.setAssigned(isAssigned);
-    			location.chargeVehicle(car);
+    			location.chargeVehicle(car, this);
     			break;
     		}
     	}
@@ -106,8 +120,7 @@ public class ChargingStation {
     				ableToWait = true;
     				break;
     			}
-    		}
-    		
+    		}    		
     		if (ableToWait) {
     			car.waitingForLocation(this, queue);
     		} else {

@@ -1,5 +1,7 @@
 package models;
 
+import services.EnergyManagement;
+
 public class Location {
 	private int numLocation;
     private double chargeRate;
@@ -40,10 +42,11 @@ public class Location {
 		car.setRemainingCapacity(newRemainingCap);
     }
     
-	public void chargeVehicle(Car car) {
+	public void chargeVehicle(Car car, ChargingStation chargingStation) {
 		Thread thread = new Thread(() -> {
 			this.setAvailable(false);
-			while (car.getRemainingCapacity() < car.getCapacity()) {    
+			while (car.getRemainingCapacity() < car.getCapacity()) {  
+				chargingStation.updateLocationEnergy();
         		calculateRemainingCapacity(this, car);
         		this.chargingTime = calculateChargingTime(this.getChargeRate(), 
         				car.getCapacity(), car.getRemainingCapacity());	                          

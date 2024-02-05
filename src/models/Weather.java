@@ -13,10 +13,14 @@ public class Weather {
 
     public Weather() {
         random = new Random();
-        this.currentWeather = getWeatherCondition();
+        this.currentWeather = setWeatherCondition();
     }
 
     public String getWeatherCondition() {
+    	return this.currentWeather;
+    }
+    
+    public String setWeatherCondition() {
         int index = random.nextInt(conditions.length);
         this.currentWeather = conditions[index];
         return this.currentWeather;

@@ -14,12 +14,13 @@ import services.EnergyManagement;
 public class ChargingStationSimulation {
 	  
 	public static void main(String[] args) {
-		int numStations = 2;
+		int numStations = 1;
         int numCars = 10;
         
-        //Weather simulation
+        // Weather simulation
         Weather weather = new Weather();
         
+        // Add Energy source 
         ArrayList<EnergySource> eSource = new ArrayList<>(); 
         Solar solarEnergy = new Solar(100, weather);
       	Grid gridPower = new Grid(200, weather);
@@ -37,8 +38,8 @@ public class ChargingStationSimulation {
 		thread.start();
 	        
         // Create and configure charging stations and services dynamically
-        ChargingStationManagement[] chargingServices = new ChargingStationManagement[numStations - 1];
-        Thread[] chargingThreads = new Thread[numStations - 1];
+        ChargingStationManagement[] chargingServices = new ChargingStationManagement[numStations];
+        Thread[] chargingThreads = new Thread[numStations];
         QueueService queueService= new QueueService();
 	       
 	    for (int j = 1; j <= numCars; j++) {
@@ -57,7 +58,7 @@ public class ChargingStationSimulation {
 	    }
 		   
 		// Create and configure charging stations
-		for (int i = 0; i < numStations - 1; i++) {
+		for (int i = 0; i < numStations; i++) {
 			ChargingStation chargingStation = new ChargingStation("Station " + (i + 1), new Random().nextInt(4, 5)*60, 4, EMS);
 			chargingServices[i] = new ChargingStationManagement(chargingStation, queueService);
 			chargingThreads[i] = new Thread(chargingServices[i]);

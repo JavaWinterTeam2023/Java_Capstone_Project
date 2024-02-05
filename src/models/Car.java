@@ -82,8 +82,7 @@ public class Car {
 		    				isAssigned = true;
 		    				location.setAvailable(false);
 		    				ableToWait = false;
-		        			location.chargeVehicle(this);
-		        			
+		    				chargingStation.updateLocationEnergy();		        			
 		        			System.out.println("[Car " + this.getId() + "]" + "[Charging]");
 		        			System.out.println("\tAt " + chargingStation.getName() 
 		        					+ " - Location: " + location.getNumLocation());
@@ -91,6 +90,7 @@ public class Car {
 		        					+ chargingStation.getEnergyManager().getWeather().getWeatherCondition());
 		        			System.out.println("\tLocation charge rate: " + location.getChargeRate());
 	        				
+		        			location.chargeVehicle(this, chargingStation);
 		        			break;
 	    				}
 	    			}
