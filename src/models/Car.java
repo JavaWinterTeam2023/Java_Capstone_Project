@@ -73,6 +73,7 @@ public class Car {
     				System.out.println("\tReach maximum waiting time of " 
     						+ this.maxWaitingTime + " minutes. ");
     				System.out.println("\tLeaving " + chargingStation.getName());
+    				isAssigned = false;
     				break;
     			}
 //    			System.out.println("Remaining time: " + remainWaitingTime + " of car " + this.id);
