@@ -36,8 +36,12 @@ public class EnergyManagement implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
+		int size=this.energySource.size();
+		int i=0;
+		while(i<size) {
+			i++;
 			synchronized(weather) {
+				
 				weather.setWeatherCondition();
 				updateTotalCapacity();
 	//			System.out.println("Total: " + this.totalCapacity);

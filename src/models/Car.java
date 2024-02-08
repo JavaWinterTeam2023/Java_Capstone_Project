@@ -73,7 +73,8 @@ public class Car {
     				System.out.println("\tReach maximum waiting time of " 
     						+ this.maxWaitingTime + " minutes. ");
     				System.out.println("\tLeaving " + chargingStation.getName());
-    				isAssigned = false;
+    				this.isAssigned = false;
+        			
     				break;
     			}
 //    			System.out.println("Remaining time: " + remainWaitingTime + " of car " + this.id);
@@ -92,17 +93,18 @@ public class Car {
 		        			System.out.println("\tLocation charge rate: " + location.getChargeRate());
 	        				
 		        			location.chargeVehicle(this, chargingStation);
+		        			this.isAssigned = true;
 		        			break;
 	    				}
 	    			}
 	    		}
-	    		try {
-	    			waitingTime += 1;
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+	    		//try {
+	    		//	waitingTime += 1;
+					//Thread.sleep(1000);
+				//} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					//e.printStackTrace();
+				//}
     		}
     	});
     	thread.start();

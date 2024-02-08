@@ -29,7 +29,7 @@ public class EnergySource implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		int i = 0;
-		while(true) {
+		while(i>10) {
 			i++;
 			this.updateCapacity();
 //			System.out.println("Iteration: " + i + " Weather: " + this.weather.currentWeather + " Energy: " + this.name + " with capacity: " + this.maxCapacity);		

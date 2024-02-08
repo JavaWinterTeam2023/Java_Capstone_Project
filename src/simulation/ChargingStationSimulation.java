@@ -14,7 +14,7 @@ import services.EnergyManagement;
 public class ChargingStationSimulation {
 	  
 	public static void main(String[] args) {
-		int numStations = 1;
+		int numStations = 2;
         int numCars = 10;
         
         // Weather simulation
